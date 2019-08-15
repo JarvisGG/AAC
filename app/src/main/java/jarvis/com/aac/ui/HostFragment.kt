@@ -9,7 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.Navigator
@@ -52,9 +55,6 @@ class HostFragment : NavHostFragment() {
         return FragmentNavigator(requireContext(), childFragmentManager, R.id.navHost)
     }
 
-    /**
-     * 初始化 Widget（Navigation 进行绑定）
-     */
     private fun setupNavigationWidget() {
         NavigationUI.setupWithNavController(toolbar, navController, drawerLayout)
 
@@ -65,7 +65,11 @@ class HostFragment : NavHostFragment() {
 
 
     private fun setupVM() {
-        vm = ViewModelProviders.of(requireActivity()).get(HostViewModel::class.java)
+//        vm = ViewModelProviders.of(requireActivity()).get(HostViewModel::class.java)
+
+        vm = activityViewModels<HostViewModel>().value
+
+//        vm = viewModels<HostViewModel>().value
 
         vm.feedTabsLiveData.observe(this, Observer {
             when(it) {
@@ -84,6 +88,7 @@ class HostFragment : NavHostFragment() {
     }
 
     private fun setupView() {
+
         navView.setNavigationItemSelectedListener {
             vm.drawerSelectedTab.postValue(FeedTab(it.itemId, it.title.toString()))
             drawerLayout.closeDrawer(navWrapper)
